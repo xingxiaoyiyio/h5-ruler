@@ -1,0 +1,59 @@
+
+.rulerWrapper .rulerPointer{
+    position: absolute;
+    border-right: 10px solid transparent;
+    border-left: 10px solid transparent;
+    border-top: 15px solid #fff;
+    left: 50%;
+    margin-left: -10px;
+}
+
+.rulerWrapper{
+    background: #f7704c;
+    height: 60px;
+    overflow: hidden;
+    position: relative;
+
+}
+.rulerWrapper .rulerScroller{
+    position: absolute;
+    display: -webkit-flex;
+    display: -webkit-box;
+    display: flex;
+    left:-10px;
+}
+
+.rulerWrapper .rulerScroller ul{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    padding:0;
+    width:100px;
+    height: 30px;
+    float:left;
+    border-right: 1px solid #eee;
+    position: relative;
+
+}
+.rulerWrapper .rulerScroller li{
+     margin:0;
+    padding:0;
+    box-sizing:border-box;
+    list-style: none;
+    width: 10px;
+    float: left;
+    border-right:1px solid #eee;
+    height: 20px;
+}
+
+.rulerWrapper .doTime span{
+    margin-left:-15px
+}
+
+.rulerWrapper .sizeNo{
+    position:absolute;
+    color: #eee;
+    top:35px;
+    display: block;
+    text-align:center
+}
