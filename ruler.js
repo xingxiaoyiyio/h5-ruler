@@ -12,6 +12,7 @@ function MeasureRuler(dParam){
     var wrapperWidth=0;
     var pleft=0;
     var firstRand=true;
+    var fixedLen=param.minUnit.toString().split(".")[1]?param.minUnit.toString().split(".")[1].length:0;
     this.initRuler=function(){
         var nhtml="";
         limitLeft=0;
@@ -50,6 +51,9 @@ function MeasureRuler(dParam){
             }
             var pointerVal=Math.floor((limitLeft-nlf)/(10*param.mult))>0?Math.floor((limitLeft-nlf)/(10*param.mult)):0;
                 pointerVal=param.minUnit*pointerVal;
+
+              if(fixedLen) pointerVal=pointerVal.toFixed(fixedLen);   
+
             if(param.callback)  param.callback(pointerVal)
             $("#"+param.wrapperId+" .rulerScroller").css("left",nlf);
 
@@ -71,6 +75,7 @@ function MeasureRuler(dParam){
             $("#"+param.wrapperId+" .rulerScroller").css("left",nDis);
             var pointerVal=Math.floor((limitLeft-nDis)/(10*param.mult));
             pointerVal=param.minUnit*pointerVal;
+            if(fixedLen) pointerVal=pointerVal.toFixed(fixedLen);   
                   if(param.callback)  param.callback(pointerVal)
             console.log(pointerVal)
         })
@@ -99,7 +104,10 @@ function MeasureRuler(dParam){
         //标尺刻度值
         $("#"+param.wrapperId+" .sizeNo").each(function(idx,ele){
             if(idx>=rulerLNo && idx<setLen-1){
-                $(ele).html((idx-rulerLNo)*param.minUnit*param.unitSet);
+                var iv=(idx-rulerLNo)*param.minUnit*param.unitSet;
+                if(fixedLen) iv=iv.toFixed(fixedLen);
+
+                $(ele).html(iv);
             }
         })
     }
@@ -115,6 +123,10 @@ function MeasureRuler(dParam){
         if(nParam){
             $.extend(param,nParam)
         }
+
+        fixedLen=param.minUnit.toString().split(".")[1]?param.minUnit.toString().split(".")[1].length:0;
+
+
         $("#"+param.wrapperId).html("");
         $("#"+param.wrapperId).unbind('touchstart');
         $("#"+param.wrapperId).unbind('touchend');
