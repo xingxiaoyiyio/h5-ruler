@@ -1,7 +1,7 @@
 function MeasureRuler(dParam){
     var param={
         wrapperId:"rulerWrapper",   //标尺ID
-        max:500,       //标尺最大刻度
+        max:1000,       //标尺最大刻度
         minUnit:1,     //标尺最小单位刻度
         unitSet:10,    //标尺单位单位刻度组
         mult:1         //标尺单位刻度的倍数 最小是1 即每一刻度占10px
@@ -12,6 +12,7 @@ function MeasureRuler(dParam){
     var wrapperWidth=0;
     var pleft=0;
     var firstRand=true;
+    var self=this;
     var fixedLen=param.minUnit.toString().split(".")[1]?param.minUnit.toString().split(".")[1].length:0;
     this.initRuler=function(){
         var nhtml="";
@@ -52,8 +53,7 @@ function MeasureRuler(dParam){
             var pointerVal=Math.floor((limitLeft-nlf)/(10*param.mult))>0?Math.floor((limitLeft-nlf)/(10*param.mult)):0;
                 pointerVal=param.minUnit*pointerVal;
 
-              if(fixedLen) pointerVal=pointerVal.toFixed(fixedLen);   
-
+            if(fixedLen) pointerVal=pointerVal.toFixed(fixedLen);   
             if(param.callback)  param.callback(pointerVal)
             $("#"+param.wrapperId+" .rulerScroller").css("left",nlf);
 
@@ -67,7 +67,8 @@ function MeasureRuler(dParam){
                 if(param.callback) param.callback(0);
                 return;
             }else if(wrapperWidth-scrollerWidth>lf){
-                $("#"+param.wrapperId+" .rulerScroller").css("left",wrapperWidth-scrollerWidth);
+                self.setValue(param.max);
+                return;
             }
             var lf=$("#"+param.wrapperId+" .rulerScroller").position().left;
             var disNo=Math.round((lf-pleft)/(10*param.mult));
@@ -76,7 +77,7 @@ function MeasureRuler(dParam){
             var pointerVal=Math.floor((limitLeft-nDis)/(10*param.mult));
             pointerVal=param.minUnit*pointerVal;
             if(fixedLen) pointerVal=pointerVal.toFixed(fixedLen);   
-                  if(param.callback)  param.callback(pointerVal)
+            if(param.callback)  param.callback(pointerVal)
             console.log(pointerVal)
         })
 
