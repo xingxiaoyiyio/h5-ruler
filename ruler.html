@@ -41,6 +41,15 @@
 
 		}
 
+		.ruler2{
+			font-size: 20px;
+			padding:10px; 
+		}
+
+		#rulerWrapper2 {
+			background: #B9C77A
+		}
+
 
     </style>
 </head>
@@ -51,6 +60,9 @@
 		<div id='value'><span class='value'>0</span><span id='unit'>g</span></div>
 		<div id='rulerWrapper'></div>
 		<div class='btn'><button id='btn1'>点我赋值</button> <button  id='btn2'>点我切换</button></div>
+		<h2>同一页面可以有多个尺子：</h2>
+		<div id='rulerWrapper2'></div>
+		<p class="ruler2">值：<span  class='rval'>0</span></p>
 	</div>
 
 	<script type="text/javascript">
@@ -64,7 +76,7 @@
 　　　　　　　 value:5,                      //初始化数值       (非必须，默认为1)
 			mult:1,                   //刻度值倍数，默认是最小刻度值为10px，如果定mult为3则最小刻度为30px (非必须，默认为1)
 			callback:rulerSetValue    //滑动尺子过程中的回调函数     (非必须)
-		})        
+		})  
 
         //回调函数，参数为滑动过程中的值
 		function rulerSetValue(val){
@@ -105,6 +117,22 @@
 			$("#unit").html(unit);
 			measureRuler.reDrawRuler(nParam);
 		})
+
+
+		//初始化尺子2
+		var measureRuler2 =new MeasureRuler({
+			wrapperId:"rulerWrapper2",     //容器ID，页面中写一个DIV就行 (必须)
+			max:100,                     //刻度尺最大的刻度    (非必须，默认为1000)
+			minUnit:0.1,                    //刻度尺最小刻度    (非必须，默认为1)
+			unitSet:10,                   //刻度尺单元长度    (非必须，默认是10)
+　　　　　　　 value:0,                      //初始化数值       (非必须，默认为1)
+			mult:1,                   //刻度值倍数，默认是最小刻度值为10px，如果定mult为3则最小刻度为30px (非必须，默认为1)
+			callback:rulerSetValue2    //滑动尺子过程中的回调函数     (非必须)
+		}) 
+
+		function rulerSetValue2(val){
+            $(".rval").html(val)
+		}
 
 
 
