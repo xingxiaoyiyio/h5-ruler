@@ -1,12 +1,14 @@
 function MeasureRuler(dParam){
     var param={
         wrapperId:"rulerWrapper",   //标尺ID
-        max:1000,       //标尺最大刻度
+        max:1000,      //标尺最大刻度
         minUnit:1,     //标尺最小单位刻度
         unitSet:10,    //标尺单位单位刻度组
+        min:0,         //最小值
         mult:1         //标尺单位刻度的倍数 最小是1 即每一刻度占10px
     }
     $.extend(param,dParam);
+
     var limitLeft=0;
     var scrollerWidth=0;
     var wrapperWidth=0;
@@ -15,13 +17,14 @@ function MeasureRuler(dParam){
     var self=this;
     var fixedLen=param.minUnit.toString().split(".")[1]?param.minUnit.toString().split(".")[1].length:0;
     this.initRuler=function(){
+        if(param.min>param.max) param.min=0
         var nhtml="";
         limitLeft=0;
         scrollerWidth=0;
         wrapperWidth=0;
         $("#"+param.wrapperId).addClass("rulerWrapper")
         $("#"+param.wrapperId).append('<div class="rulerScroller"></div><div class="rulerPointer"></div>')
-        var setLen=Math.ceil(param.max/(param.unitSet*param.minUnit))+6;
+        var setLen=Math.ceil((param.max-param.min)/(param.unitSet*param.minUnit))+6;
         var setWidth=param.unitSet*10*param.mult;
         for(var i=0;i<setLen;i++){
             nhtml+="<span class='sizeNo' style='left:"+(i*setWidth-setWidth/2)+"px;width:"+setWidth+"px'></span><ul  style='width:"+setWidth+"px'>";
@@ -51,7 +54,7 @@ function MeasureRuler(dParam){
                 return;
             }
             var pointerVal=Math.floor((limitLeft-nlf)/(10*param.mult))>0?Math.floor((limitLeft-nlf)/(10*param.mult)):0;
-                pointerVal=param.minUnit*pointerVal;
+                pointerVal=param.minUnit*pointerVal+param.min;
 
             if(fixedLen) pointerVal=pointerVal.toFixed(fixedLen);   
             if(param.callback)  param.callback(pointerVal)
@@ -64,7 +67,7 @@ function MeasureRuler(dParam){
             var lf=$("#"+param.wrapperId+" .rulerScroller").position().left;
             if(lf > limitLeft){
                 $("#"+param.wrapperId+" .rulerScroller").css("left",limitLeft);
-                if(param.callback) param.callback(0);
+                if(param.callback) param.callback(param.min);
                 return;
             }else if(wrapperWidth-scrollerWidth>lf){
                 self.setValue(param.max);
@@ -75,7 +78,7 @@ function MeasureRuler(dParam){
             var nDis=disNo*10*param.mult+pleft;
             $("#"+param.wrapperId+" .rulerScroller").css("left",nDis);
             var pointerVal=Math.floor((limitLeft-nDis)/(10*param.mult));
-            pointerVal=param.minUnit*pointerVal;
+            pointerVal=param.minUnit*pointerVal+param.min;
             if(fixedLen) pointerVal=pointerVal.toFixed(fixedLen);   
             if(param.callback)  param.callback(pointerVal)
             console.log(pointerVal)
@@ -95,27 +98,26 @@ function MeasureRuler(dParam){
         }
 
         //标尺初始化数值
-        if(param.value){
-            $("#"+param.wrapperId+" .rulerScroller").css("left",limitLeft-(param.value/param.minUnit)*10*param.mult);
-            if(param.callback)  param.callback(param.value)
-        }else{
-            $("#"+param.wrapperId+" .rulerScroller").css("left",limitLeft);
-        }
+        this.setValue(param.value);
 
         //标尺刻度值
         $("#"+param.wrapperId+" .sizeNo").each(function(idx,ele){
             if(idx>=rulerLNo && idx<setLen-1){
-                var iv=(idx-rulerLNo)*param.minUnit*param.unitSet;
+                var iv=(idx-rulerLNo)*param.minUnit*param.unitSet+param.min;
                 if(fixedLen) iv=iv.toFixed(fixedLen);
-
                 $(ele).html(iv);
             }
         })
     }
     this.setValue=function(val){
-        if(val>param.max) return;
-        $("#"+param.wrapperId+" .rulerScroller").css("left",limitLeft-val*10*param.mult/param.minUnit);
-         if(param.callback)  param.callback(val)
+        var nval=val?val:param.min;
+        if(nval>param.max) nval=param.max;
+        if(nval<param.min) nval=param.min;
+
+        var nlval=nval-param.min;
+        
+        $("#"+param.wrapperId+" .rulerScroller").css("left",limitLeft-nlval*10*param.mult/param.minUnit);
+         if(param.callback)  param.callback(nval)
     };
 
     this.reDrawRuler=function(nParam){
@@ -126,8 +128,6 @@ function MeasureRuler(dParam){
         }
 
         fixedLen=param.minUnit.toString().split(".")[1]?param.minUnit.toString().split(".")[1].length:0;
-
-
         $("#"+param.wrapperId).html("");
         $("#"+param.wrapperId).unbind('touchstart');
         $("#"+param.wrapperId).unbind('touchend');
